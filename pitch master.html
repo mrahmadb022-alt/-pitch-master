@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#101511">
+<title>Pitch Master</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{height:100%}
+body{background:#101511;color:#dfe4dd;font-family:'Manrope',sans-serif;min-height:100%;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+:root{
+  --g:#88d982;--gd:rgba(136,217,130,.14);--gb:rgba(136,217,130,.28);
+  --r:#ff6b6b;--rd:rgba(255,107,107,.13);
+  --a:#f59e0b;--ad:rgba(245,158,11,.13);
+  --bl:#60a5fa;--bld:rgba(96,165,250,.13);
+  --bg:#101511;--bg3:#1e241e;--bg4:#252b25;
+  --br:rgba(255,255,255,.07);--mu:#7a8a78;
+  --hf:'Space Grotesk',sans-serif;--nh:60px;--ah:56px;
+}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");opacity:.035}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:var(--br);border-radius:2px}
+
+/* LANDING */
+#landing{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.25rem}
+.land-logo{font-family:var(--hf);font-size:2.6rem;font-weight:800;color:var(--g);letter-spacing:-2px;font-style:italic;text-transform:uppercase;margin-bottom:.3rem}
+.land-sub{color:var(--mu);font-size:.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:3rem}
+.land-cards{display:flex;flex-direction:column;gap:.9rem;width:100%;max-width:420px}
+.lcard{background:var(--bg3);border:1px solid var(--br);border-radius:16px;padding:1.4rem 1.5rem;display:flex;align-items:center;gap:1.1rem;cursor:pointer;transition:border-color .2s}
+.lcard:active{transform:scale(.97)}
+.lcard:hover{border-color:var(--g)}
+.lcico{font-size:2rem;flex-shrink:0}
+.lcb h3{font-family:var(--hf);font-size:1.1rem;font-weight:700;margin-bottom:.2rem}
+.lcb p{color:var(--mu);font-size:.8rem;line-height:1.5}
+.lcarr{margin-left:auto;color:var(--mu);font-size:1.4rem;flex-shrink:0}
+
+/* APP SHELL */
+#app{display:none;position:relative;z-index:1;min-height:100vh}
+.abar{position:fixed;top:0;left:0;right:0;z-index:100;height:var(--ah);background:rgba(16,21,17,.93);backdrop-filter:blur(10px);border-bottom:1px solid var(--br);display:flex;align-items:center;justify-content:space-between;padding:0 1rem}
+.aback{background:none;border:1px solid var(--br);color:var(--mu);padding:.35rem .75rem;border-radius:8px;cursor:pointer;font-family:'Manrope',sans-serif;font-size:.75rem;font-weight:600}
+.aback:active{background:var(--gd);color:var(--g)}
+.atitle{font-family:var(--hf);font-size:.95rem;font-weight:700}
+
+/* BOTTOM NAV */
+.bnav{position:fixed;bottom:0;left:0;right:0;z-index:100;height:var(--nh);background:rgba(16,21,17,.96);backdrop-filter:blur(10px);border-top:1px solid var(--br);display:flex;align-items:center}
+.nb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.2rem;background:none;border:none;cursor:pointer;color:var(--mu);padding:.5rem 0;font-family:'Manrope',sans-serif;transition:color .15s}
+.nb.on{color:var(--g)}
+.nb:active{color:var(--g)}
+.ni{font-size:1.3rem;line-height:1}
+.nl{font-size:.55rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px}
+
+/* PAGE */
+.pw{padding-top:calc(var(--ah) + .75rem);padding-bottom:calc(var(--nh) + 1rem);padding-left:1rem;padding-right:1rem;max-width:580px;margin:0 auto}
+.sec{display:none}
+.sec.on{display:block;animation:fu .2s ease}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARDS */
+.card{background:var(--bg3);border:1px solid var(--br);border-radius:14px;padding:1.25rem;margin-bottom:1rem}
+.ct{font-family:var(--hf);font-size:1.15rem;font-weight:700;margin-bottom:.3rem}
+.cs{color:var(--mu);font-size:.8rem;margin-bottom:.85rem;line-height:1.5}
+.sh{margin-bottom:1.25rem;padding-top:.25rem}
+.sh h1{font-family:var(--hf);font-size:1.7rem;font-weight:800;letter-spacing:-.5px}
+.sh p{color:var(--mu);font-size:.82rem;margin-top:.25rem}
+
+/* CALENDAR */
+.cnav{display:flex;justify-content:space-between;align-items:center;margin-bottom:.85rem}
+.cnavt{font-family:var(--hf);font-size:1rem;font-weight:700}
+.cnavb{background:var(--bg4);border:1px solid var(--br);color:#fff;width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center}
+.cnavb:active{background:var(--gd)}
+.cgr{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.chd{text-align:center;font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.5px;color:var(--mu);padding:.3rem 0}
+.cd{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;font-size:.82rem;font-weight:500;position:relative;min-height:34px}
+.cd:active:not(.dis):not(.emp){background:var(--gd)}
+.cd.tod{color:var(--g);font-weight:800}
+.cd.sel{background:var(--g)!important;color:#003909;font-weight:800}
+.cd.inr{background:rgba(136,217,130,.1)}
+.cd.dis{opacity:.22;cursor:not-allowed}
+.cd.emp{cursor:default}
+.cd.dot::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;background:var(--g);border-radius:50%}
+
+/* SLOTS */
+.sgr{display:grid;grid-template-columns:repeat(2,1fr);gap:.55rem;margin-top:.6rem}
+.slot{padding:.95rem .7rem;border-radius:12px;text-align:center;cursor:pointer;border:1px solid transparent;-webkit-user-select:none;user-select:none}
+.slot:active{transform:scale(.95)}
+.stt{font-family:var(--hf);font-size:.88rem;font-weight:700}
+.stl{font-size:.58rem;text-transform:uppercase;letter-spacing:.8px;font-weight:800;margin-top:.2rem}
+.slot.available{background:var(--gd);border-color:var(--gb)}
+.slot.available .stl{color:var(--g)}
+.slot.booked{background:var(--rd);border-color:rgba(255,107,107,.25);cursor:not-allowed}
+.slot.booked .stt{text-decoration:line-through;opacity:.5}
+.slot.booked .stl{color:var(--r)}
+.slot.locked{background:var(--ad);border-color:rgba(245,158,11,.25);cursor:not-allowed}
+.slot.locked .stl{color:var(--a)}
+.slot.sel2{background:var(--g)!important;border-color:var(--g)!important}
+.slot.sel2 .stt,.slot.sel2 .stl{color:#003909}
+
+/* FORMS */
+.fg{margin-bottom:.9rem}
+.flb{display:block;font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--mu);margin-bottom:.4rem}
+.fi,.fsel{width:100%;background:rgba(0,0,0,.25);border:1px solid var(--br);color:#fff;padding:.85rem .95rem;border-radius:10px;font-family:'Manrope',sans-serif;font-size:1rem;-webkit-appearance:none;appearance:none}
+.fi:focus,.fsel:focus{outline:none;border-color:var(--g)}
+.fg2{display:grid;grid-template-columns:1fr 1fr;gap:.7rem}
+
+/* BUTTONS */
+.btn{padding:.9rem 1.4rem;border-radius:12px;font-family:var(--hf);font-weight:700;font-size:.88rem;cursor:pointer;border:none;text-transform:uppercase;letter-spacing:.8px;-webkit-user-select:none;user-select:none;transition:transform .1s}
+.btn:active{transform:scale(.96)}
+.bpri{background:var(--g);color:#003909}
+.bpri:active{background:#a3f69c}
+.bful{width:100%}
+.bdan{background:var(--rd);color:var(--r);border:1px solid rgba(255,107,107,.25)}
+.bwrn{background:var(--ad);color:var(--a);border:1px solid rgba(245,158,11,.25)}
+.bgho{background:transparent;color:var(--mu);border:1px solid var(--br)}
+.bsm{padding:.45rem .85rem;font-size:.7rem;border-radius:8px}
+
+/* BADGES */
+.bdg{display:inline-block;padding:.2rem .55rem;border-radius:20px;font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px}
+.bgr{background:var(--gd);color:var(--g)}.brd{background:var(--rd);color:var(--r)}.byl{background:var(--ad);color:var(--a)}.bbl{background:var(--bld);color:var(--bl)}
+
+/* STATS */
+.srow{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:1rem}
+.sc{background:var(--bg3);border:1px solid var(--br);border-radius:12px;padding:1rem}
+.sv{font-family:var(--hf);font-size:2rem;font-weight:800;color:var(--g);line-height:1}
+.slb{font-size:.62rem;color:var(--mu);font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-top:.3rem}
+
+/* NEXT TRAINING */
+.nxt{background:linear-gradient(135deg,rgba(136,217,130,.1),rgba(46,125,50,.06));border:1px solid var(--gb);border-left:4px solid var(--g);border-radius:14px;padding:1.2rem;margin-bottom:1rem}
+.nx-l{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--g);margin-bottom:.5rem}
+.nx-d{font-family:var(--hf);font-size:1.4rem;font-weight:800;margin-bottom:.25rem}
+.nx-t{color:#93c5fd;font-size:.9rem;font-weight:600}
+
+/* CONF */
+.conf{background:linear-gradient(135deg,rgba(136,217,130,.1),rgba(46,125,50,.06));border:1px solid var(--gb);border-left:4px solid var(--g);border-radius:14px;padding:1.2rem;margin-bottom:1rem;display:none}
+.cn-l{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:2px;color:var(--g);margin-bottom:.5rem}
+.cn-m{font-family:var(--hf);font-size:1.1rem;font-weight:800;margin-bottom:.25rem}
+.cn-d{color:var(--mu);font-size:.8rem}
+
+/* TABLE */
+.tw{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.dtb{width:100%;border-collapse:collapse;min-width:380px}
+.dtb th{padding:.6rem .7rem;text-align:left;font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:var(--mu);border-bottom:1px solid var(--br)}
+.dtb td{padding:.8rem .7rem;border-bottom:1px solid var(--br);font-size:.8rem}
+
+/* REQUEST */
+.rcard{background:var(--bg3);border:1px solid var(--br);border-radius:12px;padding:1.1rem;margin-bottom:.85rem}
+.rh{display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem;margin-bottom:.75rem}
+.rn{font-weight:700;font-size:.95rem}
+.rm{color:var(--mu);font-size:.75rem;margin-top:.2rem;line-height:1.5}
+.rnote{margin-top:.5rem;font-size:.75rem;color:#93c5fd;background:var(--bld);padding:.4rem .6rem;border-radius:6px}
+.ra{display:flex;gap:.5rem;flex-wrap:wrap}
+
+/* NEWS */
+.nitem{background:var(--bg3);border:1px solid var(--br);border-left:4px solid var(--g);border-radius:12px;padding:1.1rem;margin-bottom:.85rem}
+.nit{font-family:var(--hf);font-size:1rem;font-weight:700;margin-bottom:.25rem}
+.nid{font-size:.7rem;color:var(--mu);margin-bottom:.5rem}
+.nib{color:var(--mu);font-size:.8rem;line-height:1.6}
+
+/* SUCCESS / EMPTY */
+.sbar{background:var(--gd);border:1px solid var(--gb);border-radius:10px;padding:.8rem .95rem;color:var(--g);font-weight:700;font-size:.8rem;margin-bottom:.85rem;display:none}
+.empty{text-align:center;padding:2.5rem 1rem;color:var(--mu);font-size:.85rem}
+.ei{font-size:2.5rem;margin-bottom:.75rem;opacity:.3}
+
+/* LEGEND */
+.leg{display:flex;gap:.85rem;flex-wrap:wrap;margin-bottom:.65rem}
+.lgi{display:flex;align-items:center;gap:.3rem;font-size:.7rem;color:var(--mu);font-weight:600}
+.lgd{width:9px;height:9px;border-radius:50%}
+
+/* DAY PILLS */
+.dpills{display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.4rem}
+.dp{padding:.48rem .8rem;border-radius:20px;border:1px solid var(--br);background:var(--bg4);color:var(--mu);font-size:.75rem;font-weight:700;cursor:pointer;font-family:var(--hf);-webkit-user-select:none;user-select:none}
+.dp:active{transform:scale(.93)}
+.dp.on{background:var(--g);border-color:var(--g);color:#003909}
+
+/* RANGE */
+.rrow{display:flex;gap:.7rem;margin-top:.85rem;flex-wrap:wrap}
+.rb{flex:1;min-width:90px;background:var(--bld);border:1px solid rgba(96,165,250,.25);border-radius:10px;padding:.6rem .8rem;text-align:center}
+.rbl{font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:var(--mu);margin-bottom:.25rem}
+.rbv{font-family:var(--hf);font-weight:700;color:#93c5fd;font-size:.85rem}
+.rhi{color:var(--mu);font-size:.72rem;font-style:italic;width:100%;margin-top:.3rem}
+
+/* LOCK ROW */
+.lrow{display:flex;align-items:center;justify-content:space-between;padding:.65rem .8rem;border-radius:8px;background:var(--bg4);margin-bottom:.4rem}
+.lrt{font-weight:700;font-size:.82rem}
+
+/* MODAL */
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:flex-end;justify-content:center}
+.mbg.open{display:flex}
+.mbox{background:var(--bg3);border:1px solid var(--br);border-radius:20px 20px 0 0;padding:1.5rem 1.25rem;width:100%;max-width:500px;max-height:85vh;overflow-y:auto}
+.mt{font-family:var(--hf);font-size:1.2rem;font-weight:800;margin-bottom:1rem}
+.mac{display:flex;gap:.6rem;margin-top:1rem}
+.na{width:100%;background:rgba(0,0,0,.25);border:1px solid var(--br);color:#fff;padding:.85rem 1rem;border-radius:10px;font-family:'Manrope',sans-serif;font-size:.9rem;resize:vertical;min-height:90px}
+.na:focus{outline:none;border-color:var(--g)}
+@media(min-width:560px){.sgr{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:768px){.sgr{grid-template-columns:repeat(4,1fr)}.pw{padding-left:1.5rem;padding-right:1.5rem}}
+</style>
+</head>
+<body>
+
+<div id="landing">
+  <div class="land-logo">&#x26BD; Pitch Master</div>
+  <div class="land-sub">Premium Football Booking</div>
+  <div class="land-cards">
+    <div class="lcard" onclick="openPortal('client')"><div class="lcico">&#x1F465;</div><div class="lcb"><h3>Book a Session</h3><p>Reserve the pitch &mdash; instant confirmation</p></div><div class="lcarr">&#x203A;</div></div>
+    <div class="lcard" onclick="openPortal('owner')"><div class="lcico">&#x1F6E1;&#xFE0F;</div><div class="lcb"><h3>Owner Dashboard</h3><p>Manage bookings, lock slots, academy requests</p></div><div class="lcarr">&#x203A;</div></div>
+    <div class="lcard" onclick="openPortal('academy')"><div class="lcico">&#x1F3C6;</div><div class="lcb"><h3>Academy Portal</h3><p>Long-term recurring training reservations</p></div><div class="lcarr">&#x203A;</div></div>
+  </div>
+</div>
+
+<div id="app">
+  <header class="abar">
+    <button class="aback" onclick="goBack()">&larr; Home</button>
+    <div class="atitle" id="abt">Pitch Master</div>
+    <div style="width:56px"></div>
+  </header>
+
+  <!-- CLIENT -->
+  <div id="portal-client" style="display:none">
+    <div class="pw">
+      <div class="conf" id="cconf"><div class="cn-l">&#x2705; Booking Confirmed</div><div class="cn-m" id="cfm"></div><div class="cn-d" id="cfd"></div></div>
+      <div class="card"><div class="ct">Select a Date</div><div id="ccal"></div></div>
+      <div class="card" id="csc" style="display:none">
+        <div class="ct" id="cst">Choose a Slot</div>
+        <div class="leg"><div class="lgi"><div class="lgd" style="background:var(--g)"></div>Available</div><div class="lgi"><div class="lgd" style="background:var(--r)"></div>Booked</div><div class="lgi"><div class="lgd" style="background:var(--a)"></div>Locked</div></div>
+        <div id="csll" class="sgr"></div>
+      </div>
+      <div class="card" id="cfc" style="display:none">
+        <div class="ct">Your Details</div>
+        <div class="sbar" id="css">&#x2705; Booking confirmed!</div>
+        <div class="fg"><label class="flb">Full Name</label><input type="text" id="cn" class="fi" placeholder="Ahmed Hassan" autocomplete="name"></div>
+        <div class="fg2">
+          <div class="fg"><label class="flb">Phone</label><input type="tel" id="cp" class="fi" placeholder="+972..." autocomplete="tel"></div>
+          <div class="fg"><label class="flb">Players</label><select id="cpl" class="fsel"><option value="6">6</option><option value="8">8</option><option value="10" selected>10</option><option value="12">12</option><option value="14">14</option><option value="16">16</option></select></div>
+        </div>
+        <button class="btn bpri bful" onclick="submitCB()">&#x26A1; Confirm Booking</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OWNER -->
+  <div id="portal-owner" style="display:none">
+    <div class="pw">
+      <div id="o-overview" class="sec on">
+        <div class="sh"><h1>Overview</h1><p>Pitch activity at a glance</p></div>
+        <div class="srow" id="ostats"></div>
+        <div class="card"><div class="ct">Today's Schedule</div><div id="otday" class="sgr" style="margin-top:.5rem"></div></div>
+      </div>
+      <div id="o-bookings" class="sec">
+        <div class="sh"><h1>All Bookings</h1></div>
+        <div class="card"><div class="tw"><table class="dtb"><thead><tr><th>Name</th><th>Date</th><th>Time</th><th>Type</th><th></th></tr></thead><tbody id="obkb"></tbody></table><div id="obke" class="empty" style="display:none"><div class="ei">&#x1F4CB;</div>No bookings yet.</div></div></div>
+      </div>
+      <div id="o-lock" class="sec">
+        <div class="sh"><h1>Lock Slots</h1><p>Block unavailable times</p></div>
+        <div class="card"><div id="olcal"></div></div>
+        <div id="oldc" style="display:none">
+          <div class="card">
+            <div class="ct" id="oldt"></div>
+            <div style="margin-bottom:.75rem"><button class="btn bwrn bsm" onclick="lockDay()">&#x1F512; Lock Entire Day</button></div>
+            <div id="olrows"></div>
+          </div>
+        </div>
+        <div id="olhint" class="card"><div class="empty"><div class="ei">&#x1F4C5;</div>Tap a day to manage slots</div></div>
+      </div>
+      <div id="o-requests" class="sec">
+        <div class="sh"><h1>Academy Requests</h1></div>
+        <div id="oreql"></div>
+      </div>
+      <div id="o-news" class="sec">
+        <div class="sh"><h1>Announcements</h1></div>
+        <div class="card">
+          <div class="fg"><label class="flb">Title</label><input type="text" id="ntit" class="fi" placeholder="e.g. Maintenance Notice"></div>
+          <div class="fg"><label class="flb">Content</label><textarea id="nbdy" class="na" placeholder="Write announcement..."></textarea></div>
+          <button class="btn bpri bful" onclick="postNews()">&#x1F4E2; Publish</button>
+        </div>
+        <div id="onewsl"></div>
+      </div>
+      <div id="o-settings" class="sec">
+        <div class="sh"><h1>Settings</h1></div>
+        <div class="card">
+          <div class="fg2">
+            <div class="fg"><label class="flb">Opens</label><select id="sop" class="fsel"></select></div>
+            <div class="fg"><label class="flb">Closes</label><select id="scl" class="fsel"></select></div>
+          </div>
+          <div class="fg"><label class="flb">Pitch Name</label><input type="text" id="snm" class="fi"></div>
+          <button class="btn bpri bful" onclick="saveSettings()">Save</button>
+          <div class="sbar" id="ssav" style="display:none;margin-top:.75rem">&#x2705; Saved!</div>
+        </div>
+      </div>
+    </div>
+    <nav class="bnav" id="onav">
+      <button class="nb on" onclick="ownerNav('overview',this)"><div class="ni">&#x1F4CA;</div><div class="nl">Overview</div></button>
+      <button class="nb" onclick="ownerNav('bookings',this)"><div class="ni">&#x1F4C5;</div><div class="nl">Bookings</div></button>
+      <button class="nb" onclick="ownerNav('lock',this)"><div class="ni">&#x1F512;</div><div class="nl">Lock</div></button>
+      <button class="nb" onclick="ownerNav('requests',this)"><div class="ni">&#x1F4CB;</div><div class="nl">Requests</div></button>
+      <button class="nb" onclick="ownerNav('news',this)"><div class="ni">&#x1F4E2;</div><div class="nl">News</div></button>
+      <button class="nb" onclick="ownerNav('settings',this)"><div class="ni">&#x2699;&#xFE0F;</div><div class="nl">Settings</div></button>
+    </nav>
+  </div>
+
+  <!-- ACADEMY -->
+  <div id="portal-academy" style="display:none">
+    <div class="pw">
+      <div id="a-dashboard" class="sec on">
+        <div id="anxt"></div>
+        <div class="card"><div class="ct">Training Schedule</div><div class="tw"><table class="dtb"><thead><tr><th>Academy</th><th>Date</th><th>Time</th><th>Dur</th></tr></thead><tbody id="atbdy"></tbody></table><div id="aemp" class="empty" style="display:none"><div class="ei">&#x1F4CB;</div>No upcoming sessions.</div></div></div>
+      </div>
+      <div id="a-reservation" class="sec">
+        <div class="sh"><h1>Reservation</h1><p>Submit a recurring booking request</p></div>
+        <div class="card">
+          <div class="ct">Select Date Range</div>
+          <div class="cs">Tap start date then end date</div>
+          <div id="abcal"></div>
+          <div class="rrow">
+            <div class="rb"><div class="rbl">From</div><div class="rbv" id="afrom">&#x2014;</div></div>
+            <div class="rb"><div class="rbl">To</div><div class="rbv" id="ato">&#x2014;</div></div>
+            <div class="rhi" id="ahint">Tap a day to set start date</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="ct">Session Details</div>
+          <div class="fg"><label class="flb">Days of Week (select multiple)</label><div class="dpills" id="adpills"><div class="dp" data-day="Sunday">Sun</div><div class="dp" data-day="Monday">Mon</div><div class="dp" data-day="Tuesday">Tue</div><div class="dp" data-day="Wednesday">Wed</div><div class="dp" data-day="Thursday">Thu</div><div class="dp" data-day="Friday">Fri</div><div class="dp" data-day="Saturday">Sat</div></div></div>
+          <div class="fg2">
+            <div class="fg"><label class="flb">Start Time</label><select id="atime" class="fsel"></select></div>
+            <div class="fg"><label class="flb">Duration</label><select id="adur" class="fsel"><option value="1.5">1.5 h</option><option value="2.0">2.0 h</option><option value="3.0" selected>3.0 h</option></select></div>
+          </div>
+          <div class="sbar" id="asuc">&#x2705; Request submitted! Owner will review.</div>
+          <button class="btn bpri bful" onclick="submitAR()">Submit for Approval</button>
+        </div>
+        <div class="card">
+          <div class="ct">Availability Map</div>
+          <div class="cs">Tap a day to see booked and free slots</div>
+          <div id="amcal"></div>
+          <div id="amslots" style="margin-top:1rem"></div>
+        </div>
+      </div>
+      <div id="a-news" class="sec">
+        <div class="sh"><h1>News</h1><p>Updates from pitch owner</p></div>
+        <div id="anewsl"></div>
+      </div>
+    </div>
+    <nav class="bnav" id="anav">
+      <button class="nb on" onclick="acadNav('dashboard',this)"><div class="ni">&#x1F4CA;</div><div class="nl">Dashboard</div></button>
+      <button class="nb" onclick="acadNav('reservation',this)"><div class="ni">&#x1F4C5;</div><div class="nl">Reserve</div></button>
+      <button class="nb" onclick="acadNav('news',this)"><div class="ni">&#x1F4E2;</div><div class="nl">News</div></button>
+    </nav>
+  </div>
+</div>
+
+<div class="mbg" id="nmodal">
+  <div class="mbox">
+    <div class="mt">Leave a Note</div>
+    <p style="color:var(--mu);font-size:.82rem;margin-bottom:.85rem">Write a message to the academy.</p>
+    <textarea class="na" id="ntxt" placeholder="Your message..."></textarea>
+    <div class="mac"><button class="btn bpri" onclick="submitNote()">Send</button><button class="btn bgho" onclick="closeModal()">Cancel</button></div>
+  </div>
+</div>
+
+<script>
+const K={bk:'pm_bk',st:'pm_st',rc:'pm_rc',nw:'pm_nw'};
+const cfg=()=>{try{return JSON.parse(localStorage.getItem(K.st))||{openTime:8,closeTime:24,pitchName:'ProPitch'}}catch{return{openTime:8,closeTime:24,pitchName:'ProPitch'}}};
+const saveCfg=s=>localStorage.setItem(K.st,JSON.stringify(s));
+const allBk=()=>{try{return JSON.parse(localStorage.getItem(K.bk)||'[]')}catch{return[]}};
+const saveBk=b=>localStorage.setItem(K.bk,JSON.stringify(b));
+const addBk=d=>{const b=allBk(),nb={id:'b'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),at:new Date().toISOString(),...d};b.push(nb);saveBk(b);return nb};
+const delBk=id=>saveBk(allBk().filter(b=>b.id!==id));
+const bkDate=ds=>allBk().filter(b=>b.date===ds);
+const allRc=()=>{try{return JSON.parse(localStorage.getItem(K.rc)||'[]')}catch{return[]}};
+const saveRc=r=>localStorage.setItem(K.rc,JSON.stringify(r));
+const addRc=d=>{const r=allRc(),nr={id:'r'+Date.now().toString(36)+Math.random().toString(36).slice(2,5),at:new Date().toISOString(),status:'pending',note:'',...d};r.push(nr);saveRc(r);return nr};
+const allNw=()=>{try{return JSON.parse(localStorage.getItem(K.nw)||'[]')}catch{return[]}};
+const saveNw=n=>localStorage.setItem(K.nw,JSON.stringify(n));
+const addNw=(t,b)=>{const n=allNw(),nn={id:'n'+Date.now().toString(36),date:new Date().toISOString().split('T')[0],title:t,body:b};n.unshift(nn);saveNw(n);return nn};
+const delNw=id=>saveNw(allNw().filter(n=>n.id!==id));
+const fmt=t=>{const h=Math.floor(t),m=Math.round((t-h)*60);return`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`};
+const today=()=>{const t=new Date();return`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`};
+const mkds=(y,m,d)=>`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+
+function slotsStatus(dateStr,dur=.5){
+  const s=cfg(),bks=bkDate(dateStr),ts=today(),now=new Date(),out=[];
+  for(let t=s.openTime;t<s.closeTime;t+=.5){
+    if(dateStr===ts&&t<=(now.getHours()+now.getMinutes()/60))continue;
+    if(new Date(dateStr+'T00:00:00')<new Date(ts+'T00:00:00'))continue;
+    const end=t+dur;let st='available',bk=null;
+    for(const b of bks){if(Math.max(t,b.startTime)<Math.min(end,b.startTime+b.duration)){bk=b;st=b.type==='block'?'locked':'booked';break}}
+    out.push({time:t,status:st,bk});
+  }
+  return out;
+}
+
+(function initDemo(){
+  if(allBk().some(b=>b.name==='Thunder'))return;
+  const ts=today(),ed=new Date();ed.setMonth(ed.getMonth()+6);
+  const es=ed.toISOString().split('T')[0];
+  const DI={Sunday:0,Monday:1,Tuesday:2,Wednesday:3,Thursday:4,Friday:5,Saturday:6};
+  const acs=[
+    {name:'Elite Youth Academy',id:'a1',days:['Monday','Wednesday','Friday'],times:[16,16,16],dur:1.5},
+    {name:'Thunder',id:'a2',days:['Tuesday','Thursday'],times:[17.5,17.5],dur:2},
+    {name:'Pros',id:'a3',days:['Sunday','Saturday'],times:[14,18],dur:1.5}
+  ];
+  acs.forEach(ac=>{
+    ac.days.forEach((day,i)=>{
+      const time=ac.times[i];
+      const req=addRc({academyId:ac.id,name:ac.name,type:'academy',startDate:ts,endDate:es,dayOfWeek:day,startTime:time,duration:ac.dur,phone:''});
+      const reqs=allRc();const idx=reqs.findIndex(r=>r.id===req.id);reqs[idx].status='accepted';saveRc(reqs);
+      let cur=new Date(),end=new Date(es);
+      while(cur<=end){
+        if(cur.getDay()===DI[day])addBk({date:mkds(cur.getFullYear(),cur.getMonth(),cur.getDate()),startTime:time,duration:ac.dur,type:'academy',name:ac.name,phone:'',players:'',academyId:ac.id});
+        cur.setDate(cur.getDate()+1);
+      }
+    });
+  });
+})();
+
+function openPortal(p){
+  document.getElementById('landing').style.display='none';
+  document.getElementById('app').style.display='block';
+  ['client','owner','academy'].forEach(x=>document.getElementById('portal-'+x).style.display='none');
+  document.getElementById('portal-'+p).style.display='block';
+  document.getElementById('abt').textContent={client:'Book the Pitch',owner:'Owner Dashboard',academy:'Academy Portal'}[p];
+  if(p==='client')initClient();
+  if(p==='owner')initOwner();
+  if(p==='academy')initAcademy();
+}
+function goBack(){document.getElementById('app').style.display='none';document.getElementById('landing').style.display='flex'}
+
+function buildCal(id,{onDay,selDate=null,rs=null,re=null,dots=false}={}){
+  const wrap=document.getElementById(id);if(!wrap)return;
+  let month=new Date();month.setDate(1);
+  function render(){
+    wrap.innerHTML='';
+    const y=month.getFullYear(),m=month.getMonth();
+    const title=new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric'}).format(month);
+    wrap.innerHTML=`<div class="cnav"><button class="cnavb" id="${id}p">&lsaquo;</button><div class="cnavt">${title}</div><button class="cnavb" id="${id}n">&rsaquo;</button></div><div class="cgr" id="${id}g"></div>`;
+    wrap.querySelector('#'+id+'p').onclick=()=>{month.setMonth(m-1);render()};
+    wrap.querySelector('#'+id+'n').onclick=()=>{month.setMonth(m+1);render()};
+    const gr=wrap.querySelector('#'+id+'g');
+    ['S','M','T','W','T','F','S'].forEach(d=>{const h=document.createElement('div');h.className='chd';h.textContent=d;gr.appendChild(h)});
+    const first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate();
+    const todD=new Date();todD.setHours(0,0,0,0);
+    for(let i=0;i<first;i++){const e=document.createElement('div');e.className='cd emp';gr.appendChild(e)}
+    for(let d=1;d<=days;d++){
+      const date=new Date(y,m,d);date.setHours(0,0,0,0);
+      const dstr=mkds(y,m,d);
+      const el=document.createElement('div');el.className='cd';el.textContent=d;
+      if(date<todD){el.classList.add('dis')}
+      else{
+        if(date.getTime()===todD.getTime())el.classList.add('tod');
+        if(selDate&&dstr===selDate)el.classList.add('sel');
+        if(rs&&re){const s=new Date(rs),e=new Date(re);if(date>s&&date<e)el.classList.add('inr');if(dstr===rs||dstr===re)el.classList.add('sel')}
+        else if(rs&&dstr===rs)el.classList.add('sel');
+        if(dots&&bkDate(dstr).filter(b=>b.type!=='block').length>0)el.classList.add('dot');
+        el.onclick=()=>onDay&&onDay(dstr,date);
+      }
+      gr.appendChild(el);
+    }
+  }
+  render();
+}
+
+// CLIENT
+let cDate=null,cSlot=null;
+function initClient(){cDate=null;cSlot=null;document.getElementById('csc').style.display='none';document.getElementById('cfc').style.display='none';document.getElementById('cconf').style.display='none';buildCal('ccal',{dots:true,onDay:d=>{cDate=d;cSlot=null;document.getElementById('cfc').style.display='none';renderCS()}})}
+function renderCS(){
+  const card=document.getElementById('csc'),cont=document.getElementById('csll');
+  document.getElementById('cst').textContent=new Date(cDate).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  card.style.display='block';cont.innerHTML='';
+  const slots=slotsStatus(cDate,1.5);
+  if(!slots.length){cont.innerHTML='<div class="empty">No slots available.</div>';return}
+  slots.forEach(s=>{
+    const el=document.createElement('div');el.className='slot '+s.status;
+    el.innerHTML=`<div class="stt">${fmt(s.time)}&ndash;${fmt(s.time+1.5)}</div><div class="stl">${s.status==='available'?'Available':s.status==='locked'?'Locked':'Booked'}</div>`;
+    if(s.status==='available'){el.onclick=()=>{cSlot=s.time;cont.querySelectorAll('.slot').forEach(x=>x.classList.remove('sel2'));el.classList.add('sel2');document.getElementById('cfc').style.display='block';document.getElementById('css').style.display='none';document.getElementById('cn').value='';document.getElementById('cp').value='';document.getElementById('cfc').scrollIntoView({behavior:'smooth',block:'nearest'})}}
+    cont.appendChild(el);
+  });
+}
+function submitCB(){
+  const name=document.getElementById('cn').value.trim(),phone=document.getElementById('cp').value.trim(),players=document.getElementById('cpl').value;
+  if(!name||!phone){alert('Please fill in name and phone.');return}
+  if(cSlot===null){alert('Please select a time slot.');return}
+  addBk({date:cDate,startTime:cSlot,duration:1.5,type:'group',name,phone,players});
+  const conf=document.getElementById('cconf');
+  const d=new Date(cDate);
+  document.getElementById('cfm').textContent=`${d.toLocaleDateString('en-US',{weekday:'long',month:'short',day:'numeric'})} · ${fmt(cSlot)}–${fmt(cSlot+1.5)}`;
+  document.getElementById('cfd').textContent=`${name} · ${players} players · ${phone}`;
+  conf.style.display='block';conf.scrollIntoView({behavior:'smooth',block:'start'});
+  document.getElementById('css').style.display='block';cSlot=null;renderCS();
+  buildCal('ccal',{dots:true,onDay:d=>{cDate=d;cSlot=null;document.getElementById('cfc').style.display='none';renderCS()}});
+}
+
+// OWNER
+let oLockDate=null;
+function initOwner(){
+  loadOvw();
+  const s=cfg();
+  const op=document.getElementById('sop'),cl=document.getElementById('scl');
+  op.innerHTML='';cl.innerHTML='';
+  for(let t=6;t<=23;t+=.5){const o=document.createElement('option');o.value=t;o.textContent=fmt(t);if(t===s.openTime)o.selected=true;op.appendChild(o);const o2=document.createElement('option');o2.value=t+.5;o2.textContent=fmt(t+.5);if(t+.5===s.closeTime)o2.selected=true;cl.appendChild(o2)}
+  document.getElementById('snm').value=s.pitchName||'';
+}
+function ownerNav(sec,btn){
+  document.querySelectorAll('#onav .nb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  document.querySelectorAll('#portal-owner .sec').forEach(s=>s.classList.remove('on'));
+  document.getElementById('o-'+sec).classList.add('on');
+  if(sec==='overview')loadOvw();
+  if(sec==='bookings')loadBks();
+  if(sec==='lock')initLock();
+  if(sec==='requests')loadReqs();
+  if(sec==='news')loadONews();
+}
+function loadOvw(){
+  const bks=allBk().filter(b=>b.type!=='block'),ts=today();
+  const ws=new Date();ws.setDate(ws.getDate()-ws.getDay());const wsStr=ws.toISOString().split('T')[0];
+  const tw=bks.filter(b=>b.date>=wsStr).length,tm=bks.filter(b=>b.date.startsWith(ts.slice(0,7))).length,pnd=allRc().filter(r=>r.status==='pending').length;
+  document.getElementById('ostats').innerHTML=`<div class="sc"><div class="sv">${tw}</div><div class="slb">This Week</div></div><div class="sc"><div class="sv">${tm}</div><div class="slb">This Month</div></div><div class="sc"><div class="sv">${pnd}</div><div class="slb">Pending</div></div><div class="sc"><div class="sv">${bks.length}</div><div class="slb">Total</div></div>`;
+  const te=document.getElementById('otday');te.innerHTML='';
+  const slots=slotsStatus(ts,.5);
+  if(!slots.length){te.innerHTML='<div class="empty">No slots today.</div>';return}
+  slots.forEach(s=>{const el=document.createElement('div');el.className='slot '+s.status;el.innerHTML=`<div class="stt">${fmt(s.time)}</div><div class="stl">${s.status==='available'?'Free':s.status==='locked'?'Locked':s.bk?.name||'Booked'}</div>`;te.appendChild(el)});
+}
+function loadBks(){
+  const bks=allBk().filter(b=>b.type!=='block').sort((a,b)=>a.date>b.date?1:-1);
+  const tbody=document.getElementById('obkb'),empty=document.getElementById('obke');
+  tbody.innerHTML='';
+  if(!bks.length){empty.style.display='block';return}empty.style.display='none';
+  bks.forEach(b=>{const tr=document.createElement('tr');tr.innerHTML=`<td style="font-weight:700">${b.name}</td><td>${new Date(b.date).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</td><td>${fmt(b.startTime)}</td><td><span class="bdg ${b.type==='academy'?'bbl':'bgr'}">${b.type}</span></td><td><button class="btn bdan bsm" onclick="cancelBk('${b.id}')">&#x2715;</button></td>`;tbody.appendChild(tr)});
+}
+function cancelBk(id){if(!confirm('Cancel this booking?'))return;delBk(id);loadBks();loadOvw()}
+function initLock(){
+  oLockDate=null;document.getElementById('oldc').style.display='none';document.getElementById('olhint').style.display='block';
+  buildCal('olcal',{dots:true,onDay:d=>{oLockDate=d;document.getElementById('olhint').style.display='none';document.getElementById('oldc').style.display='block';renderLock()}});
+}
+function renderLock(){
+  const s=cfg();document.getElementById('oldt').textContent=new Date(oLockDate).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  const rows=document.getElementById('olrows');rows.innerHTML='';
+  for(let t=s.openTime;t<s.closeTime;t+=.5){
+    const bks=bkDate(oLockDate);
+    const blk=bks.find(b=>b.type==='block'&&b.startTime===t);
+    const bkd=bks.find(b=>b.type!=='block'&&b.startTime<=t&&t<b.startTime+b.duration);
+    const row=document.createElement('div');row.className='lrow';
+    const color=blk?'var(--a)':bkd?'var(--r)':'var(--g)';
+    const lbl=blk?'Locked':bkd?bkd.name:'Free';
+    row.innerHTML=`<span class="lrt" style="color:${color}">${fmt(t)} &mdash; ${lbl}</span>`;
+    if(!bkd){const btn=document.createElement('button');btn.className=`btn bsm ${blk?'bgho':'bwrn'}`;btn.textContent=blk?'Unlock':'Lock';btn.onclick=()=>{toggleLk(oLockDate,t);renderLock()};row.appendChild(btn)}
+    rows.appendChild(row);
+  }
+}
+function toggleLk(ds,t){const blk=bkDate(ds).find(b=>b.type==='block'&&b.startTime===t);if(blk)delBk(blk.id);else addBk({date:ds,startTime:t,duration:.5,type:'block',name:'Manual Lock',phone:'',players:''})}
+function lockDay(){if(!oLockDate)return;const s=cfg();for(let t=s.openTime;t<s.closeTime;t+=.5){const bks=bkDate(oLockDate);if(!bks.find(b=>b.type==='block'&&b.startTime===t)&&!bks.find(b=>b.type!=='block'&&b.startTime<=t&&t<b.startTime+b.duration))addBk({date:oLockDate,startTime:t,duration:.5,type:'block',name:'Manual Lock',phone:'',players:''})}renderLock()}
+
+let noteId=null;
+function loadReqs(){
+  const list=document.getElementById('oreql'),reqs=allRc().sort(a=>a.status==='pending'?-1:1);
+  list.innerHTML='';
+  if(!reqs.length){list.innerHTML='<div class="empty"><div class="ei">&#x1F4CB;</div>No requests yet.</div>';return}
+  reqs.forEach(r=>{const el=document.createElement('div');el.className='rcard';el.innerHTML=`<div class="rh"><div><div class="rn">${r.name}</div><div class="rm">${r.dayOfWeek} &middot; ${fmt(r.startTime)} &middot; ${r.duration}h<br>${r.startDate} &rarr; ${r.endDate}</div>${r.note?`<div class="rnote">&#x1F4DD; ${r.note}</div>`:''}</div><span class="bdg ${r.status==='pending'?'byl':r.status==='accepted'?'bgr':'brd'}">${r.status}</span></div>${r.status==='pending'?`<div class="ra"><button class="btn bpri bsm" onclick="handleReq('${r.id}','accepted')">&#x2705; Accept</button><button class="btn bdan bsm" onclick="handleReq('${r.id}','rejected')">&#x274C; Reject</button><button class="btn bgho bsm" onclick="openNote('${r.id}')">&#x1F4DD; Note</button></div>`:''}`;list.appendChild(el)});
+}
+function handleReq(id,status){
+  const reqs=allRc();const idx=reqs.findIndex(r=>r.id===id);if(idx===-1)return;
+  reqs[idx].status=status;
+  if(status==='accepted'){
+    const r=reqs[idx];const DI={Sunday:0,Monday:1,Tuesday:2,Wednesday:3,Thursday:4,Friday:5,Saturday:6};
+    let cur=new Date(r.startDate),end=new Date(r.endDate);
+    while(cur<=end){if(cur.getDay()===DI[r.dayOfWeek])addBk({date:mkds(cur.getFullYear(),cur.getMonth(),cur.getDate()),startTime:r.startTime,duration:r.duration,type:'academy',name:r.name,phone:r.phone||'',players:'',academyId:r.academyId});cur.setDate(cur.getDate()+1)}
+  }
+  saveRc(reqs);loadReqs();loadOvw();
+}
+function openNote(id){noteId=id;document.getElementById('ntxt').value='';document.getElementById('nmodal').classList.add('open')}
+function closeModal(){document.getElementById('nmodal').classList.remove('open');noteId=null}
+function submitNote(){if(!noteId)return;const note=document.getElementById('ntxt').value.trim();if(!note){alert('Write a note first.');return}const reqs=allRc();const idx=reqs.findIndex(r=>r.id===noteId);if(idx!==-1){reqs[idx].note=note;saveRc(reqs)}closeModal();loadReqs()}
+function loadONews(){
+  const nws=allNw(),list=document.getElementById('onewsl');list.innerHTML='';
+  if(!nws.length){list.innerHTML='<div class="empty"><div class="ei">&#x1F4E2;</div>No announcements yet.</div>';return}
+  nws.forEach(n=>{const el=document.createElement('div');el.className='nitem';el.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem"><div class="nit">${n.title}</div><button class="btn bdan bsm" onclick="delNwItem('${n.id}')">&#x2715;</button></div><div class="nid">${n.date}</div><div class="nib">${n.body.replace(/\n/g,'<br>')}</div>`;list.appendChild(el)});
+}
+function postNews(){const t=document.getElementById('ntit').value.trim(),b=document.getElementById('nbdy').value.trim();if(!t||!b){alert('Fill in title and content.');return}addNw(t,b);document.getElementById('ntit').value='';document.getElementById('nbdy').value='';loadONews()}
+function delNwItem(id){if(!confirm('Delete?'))return;delNw(id);loadONews()}
+function saveSettings(){const s=cfg();s.openTime=parseFloat(document.getElementById('sop').value);s.closeTime=parseFloat(document.getElementById('scl').value);s.pitchName=document.getElementById('snm').value;saveCfg(s);const el=document.getElementById('ssav');el.style.display='block';setTimeout(()=>el.style.display='none',3000)}
+
+// ACADEMY
+let aStart=null,aEnd=null,aPickEnd=false,aMapDate=null;
+function initAcademy(){
+  loadADash();
+  const s=cfg();const sel=document.getElementById('atime');sel.innerHTML='';
+  for(let t=s.openTime;t<=s.closeTime-1.5;t+=.5){const o=document.createElement('option');o.value=t;o.textContent=fmt(t);sel.appendChild(o)}
+  document.querySelectorAll('#adpills .dp').forEach(p=>p.addEventListener('click',()=>p.classList.toggle('on')));
+  buildABCal();buildAMCal();
+}
+function acadNav(sec,btn){
+  document.querySelectorAll('#anav .nb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');
+  document.querySelectorAll('#portal-academy .sec').forEach(s=>s.classList.remove('on'));
+  document.getElementById('a-'+sec).classList.add('on');
+  if(sec==='dashboard')loadADash();
+  if(sec==='reservation'){buildABCal();buildAMCal()}
+  if(sec==='news')loadANews();
+}
+function loadADash(){
+  const bks=allBk().filter(b=>b.type==='academy'&&b.date>=today()).sort((a,b)=>a.date>b.date?1:a.date<b.date?-1:a.startTime-b.startTime);
+  const tbody=document.getElementById('atbdy'),empty=document.getElementById('aemp'),next=document.getElementById('anxt');
+  tbody.innerHTML='';next.innerHTML='';
+  if(!bks.length){empty.style.display='block';return}empty.style.display='none';
+  const nb=bks[0],nd=new Date(nb.date);
+  next.innerHTML=`<div class="nxt"><div class="nx-l">&#x26A1; Next Training</div><div class="nx-d">${nd.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div><div class="nx-t">${fmt(nb.startTime)} &mdash; ${fmt(nb.startTime+nb.duration)} &middot; ${nb.name}</div></div>`;
+  bks.forEach(b=>{const isMain=b.name==='Elite Youth Academy';const tr=document.createElement('tr');tr.innerHTML=`<td style="font-weight:700">${b.name}</td><td>${isMain?'&#x2B50; ':''}${new Date(b.date).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</td><td>${fmt(b.startTime)}</td><td>${b.duration}h</td>`;tbody.appendChild(tr)});
+}
+function buildABCal(){
+  const wrap=document.getElementById('abcal');if(!wrap)return;
+  let month=new Date();month.setDate(1);
+  function render(){
+    wrap.innerHTML='';
+    const y=month.getFullYear(),m=month.getMonth();
+    wrap.innerHTML=`<div class="cnav"><button class="cnavb" id="abcp">&lsaquo;</button><div class="cnavt">${new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric'}).format(month)}</div><button class="cnavb" id="abcn">&rsaquo;</button></div><div class="cgr" id="abcg"></div>`;
+    wrap.querySelector('#abcp').onclick=()=>{month.setMonth(m-1);render()};
+    wrap.querySelector('#abcn').onclick=()=>{month.setMonth(m+1);render()};
+    const gr=wrap.querySelector('#abcg');
+    ['S','M','T','W','T','F','S'].forEach(d=>{const h=document.createElement('div');h.className='chd';h.textContent=d;gr.appendChild(h)});
+    const first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate();
+    const todD=new Date();todD.setHours(0,0,0,0);
+    for(let i=0;i<first;i++){const e=document.createElement('div');e.className='cd emp';gr.appendChild(e)}
+    for(let d=1;d<=days;d++){
+      const date=new Date(y,m,d);date.setHours(0,0,0,0);const dstr=mkds(y,m,d);
+      const el=document.createElement('div');el.className='cd';el.textContent=d;
+      if(date<todD){el.classList.add('dis')}
+      else{
+        if(aStart&&aEnd){const s=new Date(aStart),e=new Date(aEnd);if(date>s&&date<e)el.classList.add('inr');if(dstr===aStart||dstr===aEnd)el.classList.add('sel')}
+        else if(aStart&&dstr===aStart)el.classList.add('sel');
+        el.onclick=()=>{
+          if(!aStart||(aStart&&aEnd)){aStart=dstr;aEnd=null;aPickEnd=true}
+          else if(aPickEnd){if(new Date(dstr)<new Date(aStart)){aStart=dstr;aEnd=null}else{aEnd=dstr;aPickEnd=false}}
+          updARange();render();
+        };
+      }
+      gr.appendChild(el);
+    }
+  }
+  render();
+}
+function updARange(){
+  document.getElementById('afrom').textContent=aStart||'—';
+  document.getElementById('ato').textContent=aEnd||'—';
+  const h=document.getElementById('ahint');
+  if(!aStart)h.textContent='Tap a day to set start date';
+  else if(!aEnd)h.textContent='Now tap the end date';
+  else h.textContent='Range selected ✓';
+}
+function submitAR(){
+  if(!aStart||!aEnd){alert('Please select a date range.');return}
+  const days=[...document.querySelectorAll('#adpills .dp.on')].map(p=>p.dataset.day);
+  if(!days.length){alert('Please select at least one day.');return}
+  days.forEach(day=>addRc({academyId:'acad_anon',name:'Academy Training',type:'academy',startDate:aStart,endDate:aEnd,dayOfWeek:day,startTime:parseFloat(document.getElementById('atime').value),duration:parseFloat(document.getElementById('adur').value),phone:''}));
+  const s=document.getElementById('asuc');s.style.display='block';setTimeout(()=>s.style.display='none',4000);
+  aStart=null;aEnd=null;aPickEnd=false;
+  document.querySelectorAll('#adpills .dp').forEach(p=>p.classList.remove('on'));
+  buildABCal();updARange();
+}
+function buildAMCal(){
+  const wrap=document.getElementById('amcal');if(!wrap)return;
+  aMapDate=today();let month=new Date();month.setDate(1);
+  function render(){
+    wrap.innerHTML='';
+    const y=month.getFullYear(),m=month.getMonth();
+    wrap.innerHTML=`<div class="cnav"><button class="cnavb" id="amcp">&lsaquo;</button><div class="cnavt">${new Intl.DateTimeFormat('en-US',{month:'long',year:'numeric'}).format(month)}</div><button class="cnavb" id="amcn">&rsaquo;</button></div><div class="cgr" id="amcg"></div>`;
+    wrap.querySelector('#amcp').onclick=()=>{month.setMonth(m-1);render()};
+    wrap.querySelector('#amcn').onclick=()=>{month.setMonth(m+1);render()};
+    const gr=wrap.querySelector('#amcg');
+    ['S','M','T','W','T','F','S'].forEach(d=>{const h=document.createElement('div');h.className='chd';h.textContent=d;gr.appendChild(h)});
+    const first=new Date(y,m,1).getDay(),days=new Date(y,m+1,0).getDate();
+    const todD=new Date();todD.setHours(0,0,0,0);
+    for(let i=0;i<first;i++){const e=document.createElement('div');e.className='cd emp';gr.appendChild(e)}
+    for(let d=1;d<=days;d++){
+      const date=new Date(y,m,d);date.setHours(0,0,0,0);const dstr=mkds(y,m,d);
+      const el=document.createElement('div');el.className='cd';el.textContent=d;
+      if(date<todD)el.classList.add('dis');
+      else{if(dstr===aMapDate)el.classList.add('sel');el.onclick=()=>{aMapDate=dstr;render();renderAMSlots()}}
+      gr.appendChild(el);
+    }
+  }
+  render();renderAMSlots();
+}
+function renderAMSlots(){
+  const wrap=document.getElementById('amslots');if(!wrap||!aMapDate)return;
+  wrap.innerHTML=`<div style="font-family:var(--hf);font-weight:700;margin-bottom:.6rem">${new Date(aMapDate).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}</div>`;
+  const slots=slotsStatus(aMapDate,.5);
+  if(!slots.length){wrap.innerHTML+='<div class="empty">No slots available.</div>';return}
+  const gr=document.createElement('div');gr.className='sgr';
+  slots.forEach(s=>{const el=document.createElement('div');el.className='slot '+s.status;el.innerHTML=`<div class="stt">${fmt(s.time)}</div><div class="stl">${s.status==='available'?'Free':s.status==='locked'?'Locked':'Booked'}</div>`;gr.appendChild(el)});
+  wrap.appendChild(gr);
+}
+function loadANews(){
+  const nws=allNw(),wrap=document.getElementById('anewsl');wrap.innerHTML='';
+  if(!nws.length){wrap.innerHTML='<div class="empty"><div class="ei">&#x1F4E2;</div>No announcements yet.</div>';return}
+  nws.forEach(n=>{const el=document.createElement('div');el.className='nitem';el.innerHTML=`<div class="nit">${n.title}</div><div class="nid">${n.date}</div><div class="nib">${n.body.replace(/\n/g,'<br>')}</div>`;wrap.appendChild(el)});
+}
+</script>
+</body>
+</html>
