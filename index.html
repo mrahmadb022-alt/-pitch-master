@@ -377,6 +377,17 @@ const fmt=t=>{const h=Math.floor(t),m=Math.round((t-h)*60);return`${String(h).pa
 const today=()=>{const t=new Date();return`${t.getFullYear()}-${String(t.getMonth()+1).padStart(2,'0')}-${String(t.getDate()).padStart(2,'0')}`};
 const mkds=(y,m,d)=>`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
 
+/* SECURITY LAYER */
+const sanitize=str=>{if(typeof str!=='string')return'';return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;').trim().slice(0,200)};
+const validPhone=p=>/^[\d\s\+\-\(\)]{7,20}$/.test(p.trim());
+const validName=n=>n.trim().length>=2&&n.trim().length<=80&&!/[<>{}\[\]\\]/.test(n);
+const validDate=d=>/^\d{4}-\d{2}-\d{2}$/.test(d)&&!isNaN(new Date(d).getTime());
+const RL={bk:[],max:5};
+function chkRL(){const now=Date.now();RL.bk=RL.bk.filter(t=>now-t<3600000);if(RL.bk.length>=RL.max){alert('Too many booking attempts. Please wait before trying again.');return false;}RL.bk.push(now);return true;}
+function validateBk(data){if(!validDate(data.date))return'Invalid date.';if(!validName(data.name))return'Please enter a valid name (2-80 characters).';if(!validPhone(data.phone))return'Please enter a valid phone number (digits only).';return null;}
+
+
+
 function slotsStatus(dateStr,dur=.5){
   const s=cfg(),bks=bkDate(dateStr),ts=today(),now=new Date(),out=[];
   for(let t=s.openTime;t<s.closeTime;t+=.5){
@@ -476,9 +487,12 @@ function renderCS(){
   });
 }
 function submitCB(){
-  const name=document.getElementById('cn').value.trim(),phone=document.getElementById('cp').value.trim(),players=document.getElementById('cpl').value;
+  const name=sanitize(document.getElementById('cn').value),phone=sanitize(document.getElementById('cp').value),players=document.getElementById('cpl').value;
   if(!name||!phone){alert('Please fill in name and phone.');return}
   if(cSlot===null){alert('Please select a time slot.');return}
+  if(!validName(name)){alert('Please enter a valid name (letters only, 2-80 characters).');return}
+  if(!validPhone(phone)){alert('Please enter a valid phone number.');return}
+  if(!chkRL())return;
   addBk({date:cDate,startTime:cSlot,duration:1.5,type:'group',name,phone,players});
   const conf=document.getElementById('cconf');
   const d=new Date(cDate);
@@ -568,13 +582,13 @@ function handleReq(id,status){
 }
 function openNote(id){noteId=id;document.getElementById('ntxt').value='';document.getElementById('nmodal').classList.add('open')}
 function closeModal(){document.getElementById('nmodal').classList.remove('open');noteId=null}
-function submitNote(){if(!noteId)return;const note=document.getElementById('ntxt').value.trim();if(!note){alert('Write a note first.');return}const reqs=allRc();const idx=reqs.findIndex(r=>r.id===noteId);if(idx!==-1){reqs[idx].note=note;saveRc(reqs)}closeModal();loadReqs()}
+function submitNote(){if(!noteId)return;const note=sanitize(document.getElementById('ntxt').value);if(!note){alert('Write a note first.');return}const reqs=allRc();const idx=reqs.findIndex(r=>r.id===noteId);if(idx!==-1){reqs[idx].note=note;saveRc(reqs)}closeModal();loadReqs()}
 function loadONews(){
   const nws=allNw(),list=document.getElementById('onewsl');list.innerHTML='';
   if(!nws.length){list.innerHTML='<div class="empty"><div class="ei">&#x1F4E2;</div>No announcements yet.</div>';return}
   nws.forEach(n=>{const el=document.createElement('div');el.className='nitem';el.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem"><div class="nit">${n.title}</div><button class="btn bdan bsm" onclick="delNwItem('${n.id}')">&#x2715;</button></div><div class="nid">${n.date}</div><div class="nib">${n.body.replace(/\n/g,'<br>')}</div>`;list.appendChild(el)});
 }
-function postNews(){const t=document.getElementById('ntit').value.trim(),b=document.getElementById('nbdy').value.trim();if(!t||!b){alert('Fill in title and content.');return}addNw(t,b);document.getElementById('ntit').value='';document.getElementById('nbdy').value='';loadONews()}
+function postNews(){const t=sanitize(document.getElementById('ntit').value),b=sanitize(document.getElementById('nbdy').value);if(!t||!b){alert('Fill in title and content.');return}if(t.length<2){alert('Title too short.');return}addNw(t,b);document.getElementById('ntit').value='';document.getElementById('nbdy').value='';loadONews()}
 function delNwItem(id){if(!confirm('Delete?'))return;delNw(id);loadONews()}
 function saveSettings(){const s=cfg();s.openTime=parseFloat(document.getElementById('sop').value);s.closeTime=parseFloat(document.getElementById('scl').value);s.pitchName=document.getElementById('snm').value;saveCfg(s);const el=document.getElementById('ssav');el.style.display='block';setTimeout(()=>el.style.display='none',3000)}
 
@@ -648,7 +662,7 @@ function submitAR(){
   if(!aStart||!aEnd){alert('Please select a date range.');return}
   const days=[...document.querySelectorAll('#adpills .dp.on')].map(p=>p.dataset.day);
   if(!days.length){alert('Please select at least one day.');return}
-  days.forEach(day=>addRc({academyId:'acad_anon',name:'Academy Training',type:'academy',startDate:aStart,endDate:aEnd,dayOfWeek:day,startTime:parseFloat(document.getElementById('atime').value),duration:parseFloat(document.getElementById('adur').value),phone:''}));
+  if(!validDate(aStart)||!validDate(aEnd)){alert('Invalid dates selected.');return}days.forEach(day=>addRc({academyId:'acad_anon',name:'Academy Training',type:'academy',startDate:aStart,endDate:aEnd,dayOfWeek:day,startTime:parseFloat(document.getElementById('atime').value),duration:parseFloat(document.getElementById('adur').value),phone:''}));
   const s=document.getElementById('asuc');s.style.display='block';setTimeout(()=>s.style.display='none',4000);
   aStart=null;aEnd=null;aPickEnd=false;
   document.querySelectorAll('#adpills .dp').forEach(p=>p.classList.remove('on'));
